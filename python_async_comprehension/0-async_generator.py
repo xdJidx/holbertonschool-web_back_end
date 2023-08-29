@@ -7,7 +7,7 @@ import random
 from typing import List
 
 
-async def async_generator() -> List[float]:
+async def async_generator() -> float:
     """async_generator
 
     Yields:
