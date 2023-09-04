@@ -32,7 +32,7 @@ def log_stats():
     print(f"{total_logs} logs")
     print("Methods:")
     for method in methods:
-        print(f"    method {method}:", method_counts[method])
+        print(f"\tmethod {method}:", method_counts[method])
     print(f"{status_check_count} status check")
 
 
