@@ -4,7 +4,7 @@
 """
 import csv
 import math
-from typing import List
+from typing import List, Dict
 from typing import Tuple
 
 
@@ -50,7 +50,16 @@ class Server:
             return []
         return dataset[start_index:end_index]
 
-    def get_hyper(self, page: int = 1, page_size: int = 10) -> dict:
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
+        """Function hypermedia pagination
+
+        Args:
+            page (int, optional): _description_. Defaults to 1.
+            page_size (int, optional): _description_. Defaults to 10.
+
+        Returns:
+            Dict: Dictionnary of data and all information
+        """
         data = self.get_page(page, page_size)
         total_pages = math.ceil(len(self.dataset()) / page_size)
 
