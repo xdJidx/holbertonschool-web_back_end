@@ -58,7 +58,7 @@ class Server:
             List[List]: liste of pages
         """
         assert isinstance(page, int) and\
-              page > 0, "Page must be an integer greater than 0"
+            page > 0, "Page must be an integer greater than 0"
         assert isinstance(page_size, int) \
             and page_size > 0, "Page size must be an integer greater than 0"
 
