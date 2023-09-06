@@ -47,7 +47,8 @@ class Server:
         if index is not None and index not in self.indexed_dataset():
             # If the index doesn't exist, find the next available index
             next_index = index + 1
-            while next_index < total_items and next_index not in self.indexed_dataset():
+            while next_index < total_items and \
+                    next_index not in self.indexed_dataset():
                 next_index += 1
 
             # Update the start index to the next available index
@@ -61,7 +62,8 @@ class Server:
         end_index = min(start_index + page_size, total_items)
 
         # Get the data for the current page
-        data = [self.indexed_dataset()[i] for i in range(start_index, end_index)]
+        data = [self.indexed_dataset()[i] for i in range(
+            start_index, end_index)]
 
         # Calculate the next index to query with
         next_index = end_index if end_index < total_items else None
