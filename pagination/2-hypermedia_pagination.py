@@ -46,7 +46,7 @@ class Server:
         return self.__dataset
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
-        """_summary_
+        """get_page
 
         Args:
             page (int, optional): _description_. Defaults to 1.
@@ -71,12 +71,8 @@ class Server:
         data = self.get_page(page, page_size)
         total_pages = math.ceil(len(self.dataset()) / page_size)
 
-        if page < 1 or page > total_pages:
-            next_page = None
-            prev_page = None
-        else:
-            next_page = page + 1 if page < total_pages else None
-            prev_page = page - 1 if page > 1 else None
+        next_page = page + 1 if page < total_pages else None
+        prev_page = page - 1 if page > 1 else None
 
         return {
             "page_size": len(data),
