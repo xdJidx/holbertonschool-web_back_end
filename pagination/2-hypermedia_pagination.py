@@ -8,24 +8,6 @@ from typing import List
 from typing import Tuple
 
 
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """index range
-
-    Args:
-        page (int): Number of page
-        page_size (int): Total number of page
-
-    Returns:
-        tuple[int, int]: return in a list for those particular
-                         pagination parameters
-    """
-    # Calculate the start index
-    start_index = (page - 1) * page_size
-    # Calculate the end index
-    end_index = start_index + page_size
-    return (start_index, end_index)
-
-
 class Server:
     """Server class to paginate a database of popular baby names.
     """
@@ -80,3 +62,21 @@ class Server:
             "prev_page": page - 1 if page > 1 else None,
             "total_pages": total_pages,
         }
+
+
+def index_range(page: int, page_size: int) -> Tuple[int, int]:
+    """index range
+
+    Args:
+        page (int): Number of page
+        page_size (int): Total number of page
+
+    Returns:
+        tuple[int, int]: return in a list for those particular
+                         pagination parameters
+    """
+    # Calculate the start index
+    start_index = (page - 1) * page_size
+    # Calculate the end index
+    end_index = start_index + page_size
+    return (start_index, end_index)
