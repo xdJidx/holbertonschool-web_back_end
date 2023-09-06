@@ -40,6 +40,15 @@ class Server:
         return self.__indexed_dataset
 
     def get_hyper_index(self, index: int = None, page_size: int = 10) -> Dict:
+        """get_hyper_index
+
+        Args:
+            index (int, optional): _description_. Defaults to None.
+            page_size (int, optional): _description_. Defaults to 10.
+
+        Returns:
+            Dict: return dictionnary
+        """
         # Get the total number of items in the indexed dataset
         total_items = len(self.indexed_dataset())
 
