@@ -2,7 +2,7 @@ export default function appendToEachArrayValue(array, appendString) {
   // declare table
   const newArray = [];
 
-  // loops 
+  // loops
   for (const value of array) {
     // add value in table
     newArray.push(appendString + value);
