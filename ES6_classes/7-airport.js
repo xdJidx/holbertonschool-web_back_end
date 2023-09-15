@@ -16,13 +16,21 @@ export default class Airport {
     return this._name;
   }
 
+  set name(value) {
+    this._name = value;
+  }
+
   // Getter for the 'code' attribute.
   get code() {
     return this._code;
   }
 
+  set code(value) {
+    this._code = value;
+  }
+
   // Custom toString method to return the airport code.
   toString() {
-    return `[${this._code}]`;
+    return `[object ${this._code}]`;
   }
 }
