@@ -5,9 +5,9 @@ export default class Pricing {
     this._amount = amount;
     this._currency = currency;
 
-    if (!(currency instanceof Currency)) {
-        throw new TypeError('currency must be a currency');
-      }
+  if (!(currency instanceof Currency)) {
+    throw new TypeError('currency must be a currency');
+    }
   }
 
   // Getter for the 'amount' attribute.
