@@ -1,10 +1,14 @@
-import Currency from './3-currency.js';
+import Currency from './3-currency';
 
 export default class Pricing {
   constructor(amount, currency) {
     this._amount = amount;
     this._currency = currency;
-}
+
+    if (!(currency instanceof Currency)) {
+        throw new TypeError('currency must be a currency');
+      }
+  }
 
   // Getter for the 'amount' attribute.
   get amount() {
@@ -28,7 +32,7 @@ export default class Pricing {
 
   // Method to display the full price information.
   displayFullPrice() {
-    return `${this._amount} ${this._currency.name} (${this._currency.code})`;
+    return `${this.amount} ${this.currency.name} (${this.currency.code})`;
   }
 
   // Static method to convert the price using a conversion rate.
