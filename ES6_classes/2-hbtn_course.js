@@ -31,6 +31,7 @@ export default class HolbertonCourse {
 
   // Helper method to validate string attributes.
   validateString(value, attributeName) {
+    /* eslint-disable class-methods-use-this */
     if (typeof value !== 'string') {
       throw new TypeError(`${attributeName} must be a string`);
     }
@@ -39,6 +40,7 @@ export default class HolbertonCourse {
 
   // Helper method to validate number attributes.
   validateNumber(value, attributeName) {
+    /* eslint-disable class-methods-use-this */
     if (typeof value !== 'number' || Number.isNaN(value)) {
       throw new TypeError(`${attributeName} must be a number`);
     }
@@ -47,6 +49,7 @@ export default class HolbertonCourse {
 
   // Helper method to validate array attributes.
   validateArray(value, attributeName) {
+    /* eslint-disable class-methods-use-this */
     if (!Array.isArray(value)) {
       throw new TypeError(`${attributeName} must be an array`);
     }
