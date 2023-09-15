@@ -2,12 +2,16 @@ import Currency from './3-currency';
 
 export default class Pricing {
   constructor(amount, currency) {
+    if (typeof amount !== 'number') {
+        throw new TypeError('Amount must be a Number');
+        }
+
+    if (!(currency instanceof Currency)) {
+        throw new TypeError('currency must be a currency');
+        }
+
     this._amount = amount;
     this._currency = currency;
-
-  if (!(currency instanceof Currency)) {
-    throw new TypeError('currency must be a currency');
-    }
   }
 
   // Getter for the 'amount' attribute.
