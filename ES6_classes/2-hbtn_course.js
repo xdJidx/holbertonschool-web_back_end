@@ -32,7 +32,6 @@ export default class HolbertonCourse {
 
   // Helper method to validate string attributes.
   validateString(value, attributeName) {
-
     if (typeof value !== 'string') {
       throw new TypeError(`${attributeName} must be a string`);
     }
