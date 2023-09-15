@@ -1,10 +1,10 @@
-import Currency from './3-currency';
+import Currency from './3-currency.js';
 
 export default class Pricing {
-    constructor(amount, currency) {
-        this._amount = amount;
-        this._currency = currency;
-    }
+  constructor(amount, currency) {
+    this._amount = amount;
+    this._currency = currency;
+}
 
   // Getter for the 'amount' attribute.
   get amount() {
@@ -16,14 +16,14 @@ export default class Pricing {
     this._amount = newAmount;
   }
 
-   // Getter for the 'currency' attribute.
-   get currency() {
+  // Getter for the 'currency' attribute.
+  get currency() {
     return this._currency;
   }
 
   // Setter for the 'currency' attribute.
   set currency(newCurrency) {
-    this._code = newCurrency;
+    this._currency = newCurrency;
   }
 
   // Method to display the full price information.
