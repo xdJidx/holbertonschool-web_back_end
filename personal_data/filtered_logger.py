@@ -7,6 +7,8 @@ import re
 import logging
 from typing import List
 from typing import Tuple
+import os
+import mysql.connector
 
 PII_FIELDS: Tuple[str, ...] = ["name", "email", "phone_number", "address",
                                "social_security_number"]
@@ -79,3 +81,32 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+def get_db():
+    """Returns a connector to the database.
+
+    Returns:
+        mysql.connector.connection.MySQLConnection: Database connector object.
+    """
+    username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    database = os.getenv('PERSONAL_DATA_DB_NAME', 'my_db')
+
+    db = mysql.connector.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=database
+    )
+
+    return db
+
+if __name__ == "__main__":
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT COUNT(*) FROM users;")
+    for row in cursor:
+        print(row[0])
+    cursor.close()
+    db.close()
