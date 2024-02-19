@@ -9,6 +9,7 @@ from typing import List
 from typing import Tuple
 import os
 import mysql.connector
+from mysql.connector.connection import MySQLConnection
 
 PII_FIELDS: Tuple[str, ...] = ["name", "email", "phone_number", "address",
                                "social_security_number"]
@@ -82,7 +83,8 @@ def get_logger() -> logging.Logger:
 
     return logger
 
-def get_db():
+
+def get_db() -> MySQLConnection:
     """Returns a connector to the database.
 
     Returns:
@@ -101,6 +103,7 @@ def get_db():
     )
 
     return db
+
 
 if __name__ == "__main__":
     db = get_db()
