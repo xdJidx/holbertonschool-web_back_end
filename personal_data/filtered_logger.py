@@ -5,11 +5,11 @@ Personal data
 
 import re
 import logging
-from typing import List
 from typing import Tuple
 import os
 import mysql.connector
 from mysql.connector.connection import MySQLConnection
+import bcrypt
 
 PII_FIELDS: Tuple[str, ...] = ["name", "email", "phone_number", "address",
                                "social_security_number"]
@@ -105,11 +105,24 @@ def get_db() -> MySQLConnection:
     return db
 
 
-if __name__ == "__main__":
+def main():
+    # Connectez-vous à la base de données et exécutez un dump SQL depuis user_data.csv
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT COUNT(*) FROM users;")
-    for row in cursor:
-        print(row[0])
+
+    # Remplacez user_data.csv par le chemin réel de votre fichier CSV
+    with open('/home/jerome/holbertonschool-web_back_end/personal_data/filtered_logger.py', 'r') :
+        cursor.execute("USE my_db;")
+        cursor.execute("DROP TABLE IF EXISTS users;")
+        cursor.execute("CREATE TABLE users (name VARCHAR(256), email VARCHAR(256), phone_number VARCHAR(16), address VARCHAR(256), social_security_number VARCHAR(16));")
+        cursor.execute("LOAD DATA LOCAL INFILE 'user_data.csv' INTO TABLE users FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;")
+
     cursor.close()
     db.close()
+
+    # Exécutez le script avec les variables d'environnement correctement définies
+    os.system("PERSONAL_DATA_DB_USERNAME=root_user PERSONAL_DATA_DB_PASSWORD=root_pwd PERSONAL_DATA_DB_HOST=localhost PERSONAL_DATA_DB_NAME=my_db ./filtered_logger.py")
+
+
+if __name__ == "__main__":
+    main()
