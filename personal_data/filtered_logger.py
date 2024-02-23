@@ -1,128 +1,87 @@
 #!/usr/bin/env python3
 """
-Personal data
+0. Regex-ing
+(.*?)= value field use motig no gourmand
 """
 
 import re
-import logging
-from typing import Tuple
 import os
+import logging
+from typing import List
 import mysql.connector
-from mysql.connector.connection import MySQLConnection
-import bcrypt
 
-PII_FIELDS: Tuple[str, ...] = ["name", "email", "phone_number", "address",
-                               "social_security_number"]
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
 
-def filter_datum(fields: Tuple[str, ...], redaction: str, message: str,
-                 separator: str) -> str:
-    """
-    Returns the log message obfuscated
-    fields: a list of strings representing all fields to obfuscate
-    redaction: a string representing by what the field will be obfuscated
-    message: a string representing the log line
-    separator: a string representing by which character is
-      separating all fields in the log line
-    """
-    return re.sub(fr'({"|".join(fields)})=[^{separator}]+',
-                  fr'\1={redaction}',
-                  message)
+""" Task O: """
+
+
+def filter_datum(fields: List[str], redaction: str,
+                 message: str, separator: str) -> str:
+    """Obfuscate sensitive information in a log message."""
+    # Création d'une expression régulière pour rechercher les champs ds le msg
+    # Concaténation des champs avec le séparateur '|'
+    pattern = "|".join(fields)
+    # Expression régulière complète
+    regex = f"({pattern})=(.*?){separator}"
+    # Remplacement des occurrences des champs/la value de redaction ds le msg
+    return re.sub(regex, f"\\1={redaction}{separator}", message)
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class
-    """
+    """ Redacting Formatter class """
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields: Tuple[str, ...]):
-        """Initializes a RedactingFormatter instance with a list
-          of fields to obfuscate.
-
-        Args:
-            fields (List[str]): A list of strings representing
-            the fields to obfuscate in log messages.
-        """
-        super(RedactingFormatter, self).__init__(self.FORMAT)
+    def __init__(self, fields: List[str]):
         self.fields = fields
+        super().__init__(self.FORMAT)
 
     def format(self, record: logging.LogRecord) -> str:
-        """Formats the log record, obfuscating specified fields
-        in the log message.
+        """ Format method to filter sensitive values """
+        # Filtrer les values sensibles dans le msg de journal
+        record.msg = filter_datum(
+            self.fields, self.REDACTION, record.msg, self.SEPARATOR)
+        # Call méthode de formatage de la cls parent pr compléter le formatage
+        return super().format(record)
 
-        Args:
-            record (logging.LogRecord): The log record to be formatted.
 
-        Returns:
-            str: The formatted log message.
-        """
-        record.msg = filter_datum(self.fields, self.REDACTION, record.msg,
-                                  self.SEPARATOR)
-        return super(RedactingFormatter, self).format(record)
+'''Task 2 - Create logger '''
 
 
 def get_logger() -> logging.Logger:
-    """Returns a logging.Logger object named "user_data" with
-       specified configurations.
-
-    Returns:
-        logging.Logger: The configured logger.
-    """
-    logger = logging.getLogger("user_data")
+    """ Returns a logging object """
+    # Création de l'objet Logger
+    logger = logging.getLogger('user_data')
+    # Journalise les msg ayant un niveau INFO
     logger.setLevel(logging.INFO)
+    # msg du logger non transmis aux loggers parents
     logger.propagate = False
-
-    formatter = RedactingFormatter(fields=PII_FIELDS)
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-
-    logger.addHandler(stream_handler)
+    # Création d'un gestionnaire de flux pour les msg vers la sortie
+    handler = logging.StreamHandler()
+    # Défir un formateur de message pour masquer les champs sensibles
+    formatter = RedactingFormatter(["email", "password"])
+    handler.setFormatter(formatter)
+    # Ajout du gestionnaire de flux au logger
+    logger.addHandler(handler)
 
     return logger
 
 
-def get_db() -> MySQLConnection:
-    """Returns a connector to the database.
-
-    Returns:
-        mysql.connector.connection.MySQLConnection: Database connector object.
-    """
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Returns a connector to a database"""
     username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
     password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
-    host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
-    database = os.getenv('PERSONAL_DATA_DB_NAME', 'my_db')
+    hosting = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
 
-    db = mysql.connector.connect(
+    database = mysql.connector.connect(
+        host=hosting,
         user=username,
         password=password,
-        host=host,
-        database=database
+        database=db_name
     )
 
-    return db
-
-
-def main():
-    # Connectez-vous à la base de données et exécutez un dump SQL depuis user_data.csv
-    db = get_db()
-    cursor = db.cursor()
-
-    # Remplacez user_data.csv par le chemin réel de votre fichier CSV
-    with open('/home/jerome/holbertonschool-web_back_end/personal_data/filtered_logger.py', 'r') :
-        cursor.execute("USE my_db;")
-        cursor.execute("DROP TABLE IF EXISTS users;")
-        cursor.execute("CREATE TABLE users (name VARCHAR(256), email VARCHAR(256), phone_number VARCHAR(16), address VARCHAR(256), social_security_number VARCHAR(16));")
-        cursor.execute("LOAD DATA LOCAL INFILE 'user_data.csv' INTO TABLE users FIELDS TERMINATED BY ',' ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;")
-
-    cursor.close()
-    db.close()
-
-    # Exécutez le script avec les variables d'environnement correctement définies
-    os.system("PERSONAL_DATA_DB_USERNAME=root_user PERSONAL_DATA_DB_PASSWORD=root_pwd PERSONAL_DATA_DB_HOST=localhost PERSONAL_DATA_DB_NAME=my_db ./filtered_logger.py")
-
-
-if __name__ == "__main__":
-    main()
+    return database
