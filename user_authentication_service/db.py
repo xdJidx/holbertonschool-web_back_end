@@ -2,7 +2,6 @@
 """DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
@@ -65,7 +64,5 @@ class DB:
                 else:
                     raise ValueError(f"Invalid attribute: {key}")
             self._session.commit()
-        except NoResultFound:
+        except NoResultFound as e:
             raise NoResultFound(f"No user found with ID: {user_id}")
-        except InvalidRequestError as e:
-            raise InvalidRequestError(f"Invalid request error: {e}")
