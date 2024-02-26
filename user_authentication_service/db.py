@@ -2,6 +2,7 @@
 """DB module
 """
 from sqlalchemy import create_engine
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
@@ -54,3 +55,17 @@ class DB:
             return user
         except NoResultFound as e:
             raise NoResultFound(f"Error in finding user: {e}")
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        try:
+            user_to_update = self.find_user_by(id=user_id)
+            for key, value in kwargs.items():
+                if hasattr(User, key):
+                    setattr(user_to_update, key, value)
+                else:
+                    raise ValueError(f"Invalid attribute: {key}")
+            self._session.commit()
+        except NoResultFound:
+            raise NoResultFound(f"No user found with ID: {user_id}")
+        except InvalidRequestError as e:
+            raise InvalidRequestError(f"Invalid request error: {e}")
