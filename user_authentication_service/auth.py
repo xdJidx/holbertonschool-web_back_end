@@ -8,7 +8,7 @@ import bcrypt
 def _hash_password(password):
     """
     Hashes a password with bcrypt
-    
+
     Args:
         password (str): The password to hash
 
