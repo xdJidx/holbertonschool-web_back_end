@@ -6,7 +6,15 @@ import bcrypt
 
 
 def _hash_password(password):
-    # Generate a random salt and hash the password
+    """
+    Hashes a password with bcrypt
+    
+    Args:
+        password (str): The password to hash
+
+    Returns:
+        bytes: The hashed password
+    """
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     # Return the hashed password as bytes
