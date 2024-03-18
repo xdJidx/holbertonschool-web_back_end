@@ -50,7 +50,8 @@ class Cache:
 
         print(f"{method.__qualname__} was called {len(input_list)} times:")
         for input_args, output_value in zip(input_list, output_list):
-            print(f"{method.__qualname__}(*{input_args.decode('utf-8')}) -> {output_value.decode('utf-8')}")
+            print(f"{method.__qualname__}(*{input_args.decode('utf-8')})
+                  -> {output_value.decode('utf-8')}")
 
     @call_history
     def store(self, data):
