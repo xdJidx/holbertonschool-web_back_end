@@ -27,6 +27,26 @@ class Cache:
         self._redis.set(key, data)
         return key
 
+    @staticmethod
+    def call_history(method: Callable) -> Callable:
+        @wraps(method)
+        def wrapper(self, *args, **kwargs):
+            self._redis.rpush(f"{method.__qualname__}:inputs", str(args))
+            result = method(self, *args, **kwargs)
+            self._redis.rpush(f"{method.__qualname__}:outputs", str(result))
+            return result
+        return wrapper
+
+    @call_history
+    def get(self, key: str, fn: Callable = None) -> Union[str, bytes,
+                                                          int, float]:
+        value = self._redis.get(key)
+        if value is None:
+            return None
+        if fn is not None:
+            return fn(value)
+        return value
+
     def get(self, key: str, fn: Callable = None) -> Union[str, bytes,
                                                           int, float]:
         value = self._redis.get(key)
