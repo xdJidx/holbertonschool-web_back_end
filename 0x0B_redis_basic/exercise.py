@@ -39,6 +39,19 @@ class Cache:
             return output
         return wrapper
 
+    @staticmethod
+    def replay(method: Callable):
+        cache = Cache()  # Create a new Cache instance
+        input_key = f"{method.__qualname__}:inputs"
+        output_key = f"{method.__qualname__}:outputs"
+
+        input_list = cache._redis.lrange(input_key, 0, -1)
+        output_list = cache._redis.lrange(output_key, 0, -1)
+
+        print(f"{method.__qualname__} was called {len(input_list)} times:")
+        for input_args, output_value in zip(input_list, output_list):
+            print(f"{method.__qualname__}(*{input_args.decode('utf-8')}) -> {output_value.decode('utf-8')}")
+
     @call_history
     def store(self, data):
         key = str(uuid.uuid4())
