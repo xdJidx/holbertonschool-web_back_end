@@ -1,5 +1,4 @@
--- 5. List the number of fans for each origin.
--- Order the result by the number of fans in descending order.
+-- Make a lsit of best band fans
 SELECT origin AS origin ,SUM(fans) AS nb_Fans
 FROM metal_bands
 GROUP BY origin
