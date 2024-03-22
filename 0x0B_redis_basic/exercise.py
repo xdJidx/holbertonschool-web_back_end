@@ -6,7 +6,6 @@ from uuid import uuid4
 from typing import Union, Optional, Callable
 from functools import wraps
 
-
 UnionOfTypes = Union[str, bytes, int, float]
 
 
@@ -41,19 +40,13 @@ def replay(method: Callable):
     """Fonction pour rejouer et afficher l'historique des appels"""
     self_ = method.__self__
     stored_name = method.__qualname__
-    stored_key = self_.get(stored_name)
-    if stored_key:
-        times = self_.get_str(stored_key)
-        inputs = self_._redis.lrange(stored_name + ":inputs", 0, -1)
-        outputs = self_._redis.lrange(stored_name + ":outputs", 0, -1)
+    inputs = stored_name + ":inputs"
+    outputs = stored_name + ":outputs"
 
-        print(f"{stored_name} a été appelée {times} fois:")
-        zipvalues = zip(inputs, outputs)
-        result_list = list(zipvalues)
-        for k, v in result_list:
-            name = self_.get_str(k)
-            val = self_.get_str(v)
-            print(f"{stored_name}(*{name}) -> {val}")
+    print(f"{stored_name} was called {self_._redis.get(stored_name)} times:")
+    for input, output in zip(self_._redis.lrange(inputs, 0, -1),
+                             self_._redis.lrange(outputs, 0, -1)):
+        print(f"{stored_name}(*{input.decode()}) -> {output.decode()}")
 
 
 class Cache:
@@ -88,8 +81,8 @@ class Cache:
         return string.decode("utf-8")
 
     def get_int(self, key: str) -> Optional[int]:
-        """Récupère data depuis Redis à l'aide d'une clé et"""
-        """les retourne en int"""
+        """Récupère data depuis Redis à l'aide d'une clé et
+        les retourne en int"""
         value = self._redis.get(key)
         if value is not None:
             try:
